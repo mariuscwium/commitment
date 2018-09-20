@@ -1,6 +1,8 @@
 import React from 'react';
 import { Button, View } from 'react-native';
 import { MapView, Location, Permissions } from 'expo';
+import { connect } from 'react-redux';
+import { update } from '../modules/commitments';
 
 const { Marker, Callout } = MapView;
 
@@ -25,7 +27,7 @@ class FindGym extends React.Component {
     };
 
     saveGymLocation = () => {
-        console.log(this.state.coords);
+        this.props.saveGymLocation(this.state.coords);
         this.props.navigation.navigate('EditCommitment');
     };
 
@@ -53,6 +55,22 @@ class FindGym extends React.Component {
     }
 }
 
-export default FindGym;
+function mapStateToProps({ commitmentLocation }) {
+    return {
+        commitmentLocation
+    };
+}
+function mapDispatchToProps(dispatch) {
+    return {
+        saveGymLocation: value => dispatch(update({ field: 'commitmentLocation', value }))
+    };
+}
+// export default TodoList;
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(FindGym);
+
+// export default FindGym;
 
 // AIzaSyD-bDEdd1GGNMxkm1tNYZkJzS6xCcSxhZo

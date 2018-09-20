@@ -1,4 +1,8 @@
 import React from 'react';
+
+import { Provider } from 'react-redux';
+import configureStore from './src/configureStore';
+
 import { createStackNavigator } from 'react-navigation';
 import Onboarding from './src/screens/Onboarding';
 import EditCommitment from './src/screens/EditCommitment';
@@ -19,8 +23,13 @@ const RootStack = createStackNavigator({
     }
 });
 
+const store = configureStore();
 export default class App extends React.Component {
     render() {
-        return <RootStack />;
+        return (
+            <Provider store={store}>
+                <RootStack />
+            </Provider>
+        );
     }
 }
