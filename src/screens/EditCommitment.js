@@ -7,9 +7,10 @@ class EditCommitment extends React.Component {
     };
     render() {
         return (
-            <View>
-                <Text>Edit commitment</Text>
-                <Button title="Find your gym" onPress={() => this.props.navigation.navigate('FindGym')} />
+            <View style={{ flex: 1 }}>
+                <View style={{ flex: 1 }}>
+                    <Button title="Find your gym" onPress={() => this.props.navigation.navigate('FindGym')} />
+                </View>
             </View>
         );
     }
