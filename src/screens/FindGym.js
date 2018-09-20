@@ -1,74 +1,104 @@
-import React from 'react';
-import { Button, View } from 'react-native';
-import { MapView, Location, Permissions } from 'expo';
-import { connect } from 'react-redux';
-import { update } from '../modules/commitments';
+import React from "react";
+import { Platform, Button, View } from "react-native";
+import { Constants, MapView, Location, Permissions } from "expo";
+import { connect } from "react-redux";
+import { update } from "../modules/commitments";
 
-const { Marker, Callout } = MapView;
+const { Marker } = MapView;
 
 class FindGym extends React.Component {
-    state = {
-        coords: {
-            latitude: 37.78825,
-            longitude: -122.4324
-        }
-    };
-    static navigationOptions = {
-        title: 'Find your gym'
-    };
+  state = {};
+  static navigationOptions = {
+    title: "Find your gym"
+  };
 
-    onRegionChange = ({ latitude, longitude }) => {
-        this.setState({
-            coords: {
-                latitude,
-                longitude
-            }
-        });
-    };
-
-    saveGymLocation = () => {
-        this.props.saveGymLocation(this.state.coords);
-        this.props.navigation.navigate('EditCommitment');
-    };
-
-    render() {
-        const { latitude, longitude } = this.state.coords;
-        return (
-            <View style={{ flex: 1 }}>
-                <MapView
-                    style={{ flex: 1 }}
-                    initialRegion={{
-                        latitude,
-                        longitude,
-                        latitudeDelta: 0.0922,
-                        longitudeDelta: 0.0421
-                    }}
-                    onRegionChange={this.onRegionChange}
-                >
-                    <Marker coordinate={this.state.coords} />
-                </MapView>
-                <View style={{ position: 'absolute', bottom: 40, left: 40, right: 40 }}>
-                    <Button title="That's it!" onPress={this.saveGymLocation} />
-                </View>
-            </View>
-        );
+  componentWillMount() {
+    if (Platform.OS === "android" && !Constants.isDevice) {
+      this.setState({
+        errorMessage:
+          "Oops, this will not work on Sketch in an Android emulator. Try it on your device!"
+      });
+    } else {
+      this._getLocationAsync();
     }
+  }
+
+  _getLocationAsync = async () => {
+    let { status } = await Permissions.askAsync(Permissions.LOCATION);
+    if (status !== "granted") {
+      this.setState({
+        errorMessage: "Permission to access location was denied"
+      });
+    }
+    if (!this.props.commitmentLocation) {
+      let location = await Location.getCurrentPositionAsync({});
+      this.setState({ location });
+    } else {
+      let location = this.props.commitmentLocation;
+      this.setState({ location: { coords: location } });
+    }
+  };
+
+  onRegionChange = ({ latitude, longitude }) => {
+    this.setState({
+      location: {
+        coords: {
+          latitude,
+          longitude
+        }
+      }
+    });
+  };
+
+  saveGymLocation = () => {
+    this.props.saveGymLocation(this.state.location.coords);
+    this.props.navigation.navigate("EditCommitment");
+  };
+
+  render() {
+    return (
+      <View style={{ flex: 1 }}>
+        {this.state.location && (
+          <MapView
+            style={{ flex: 1 }}
+            initialRegion={{
+              latitude: this.state.location.coords.latitude,
+              longitude: this.state.location.coords.longitude,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421
+            }}
+            onRegionChange={this.onRegionChange}
+          >
+            <Marker coordinate={this.state.location.coords} />
+          </MapView>
+        )}
+
+        <View style={{ position: "absolute", bottom: 40, left: 40, right: 40 }}>
+          <Button title="That's it!" onPress={this.saveGymLocation} />
+        </View>
+      </View>
+    );
+  }
 }
 
-function mapStateToProps({ commitmentLocation }) {
-    return {
-        commitmentLocation
-    };
+function mapStateToProps(state) {
+  var { commitmentLocation } = state.commitments;
+
+  return {
+    commitmentLocation
+  };
 }
+
 function mapDispatchToProps(dispatch) {
-    return {
-        saveGymLocation: value => dispatch(update({ field: 'commitmentLocation', value }))
-    };
+  return {
+    saveGymLocation: value =>
+      dispatch(update({ field: "commitmentLocation", value }))
+  };
 }
 // export default TodoList;
 export default connect(
-    mapStateToProps,
-    mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(FindGym);
 
 // export default FindGym;

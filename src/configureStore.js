@@ -1,14 +1,11 @@
-import { createStore, applyMiddleware, combineReducers } from 'redux';
-import { createLogger } from 'redux-logger';
-import commitments from './modules/commitments';
+import { createStore, applyMiddleware, combineReducers } from "redux";
+import commitments from "./modules/commitments";
 
-const loggerMiddleware = createLogger(); // initialize logger
-
-const createStoreWithMiddleware = applyMiddleware(loggerMiddleware)(createStore); // apply logger to redux
+// const createStoreWithMiddleware = applyMiddleware()(createStore); // apply logger to redux
 
 const reducer = combineReducers({
-    commitments
+  commitments
 });
 
-const configureStore = initialState => createStoreWithMiddleware(reducer, initialState);
+const configureStore = initialState => createStore(reducer, initialState);
 export default configureStore;
