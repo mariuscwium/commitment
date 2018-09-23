@@ -1,18 +1,32 @@
 import React from 'react';
-import { View, Text, StyleSheet, Button, TextInput, Picker } from 'react-native';
+import { View, Text, StyleSheetScrollView, Button, TextInput, Picker } from 'react-native';
+import { MapView } from 'expo';
 import { connect } from 'react-redux';
 import { Formik } from 'formik';
+import { update } from '../modules/commitments';
 
+const { Marker } = MapView;
 class EditCommitment extends React.Component {
     static navigationOptions = {
         title: 'Edit your commitment'
     };
 
     Location = () => {
-        if (this.props.commitmentLocation) {
+        if (this.props.location) {
             return (
-                <View>
-                    <Text>Gym location selected!</Text>
+                <View style={{ flex: 1 }}>
+                    <MapView
+                        style={{ flex: 1 }}
+                        initialRegion={{
+                            latitude: this.props.location.latitude,
+                            longitude: this.props.location.longitude,
+                            latitudeDelta: 0.01,
+                            longitudeDelta: 0.01
+                        }}
+                        liteMode
+                    >
+                        <Marker coordinate={this.props.location} />
+                    </MapView>
                     <Button title="Change location" onPress={() => this.props.navigation.navigate('FindGym')} />
                 </View>
             );
@@ -21,16 +35,30 @@ class EditCommitment extends React.Component {
         }
     };
 
-    updateCommitment = values => {};
+    updateCommitment = values => {
+        Object.keys(values).map(key => {
+            this.props.updateCommitment({
+                field: key,
+                value: values[key]
+            });
+        });
+        this.props.navigation.navigate('ViewCommitment');
+    };
     render() {
         return (
             <View style={{ flex: 1 }}>
                 <View style={{ flex: 1 }}>{this.Location()}</View>
-
-                <Formik style={{ flex: 1 }} initialValues={{ frequency: '1' }} onSubmit={values => console.log(values)}>
+                <Formik
+                    style={{ flex: 1 }}
+                    initialValues={{
+                        frequency: 1,
+                        penalty: 5
+                    }}
+                    onSubmit={values => this.updateCommitment(values)}
+                >
                     {props => (
                         <View style={{ flex: 1 }}>
-                            <Text>How often do you want to go to the gym?</Text>
+                            <Text> How often can you commit to going to the gym ? </Text>
                             <Picker
                                 selectedValue={props.values.frequency}
                                 onValueChange={props.handleChange('frequency')}
@@ -40,16 +68,14 @@ class EditCommitment extends React.Component {
                                 <Picker.Item label="Three times a week" value="3" />
                                 <Picker.Item label="Four times a week" value="4" />
                             </Picker>
-
-                            <Text>If you don't go that many times, how much are you willing to pay?</Text>
+                            <Text> How much are you willing to pay if you don 't go that many times?</Text>
                             <Picker selectedValue={props.values.penalty} onValueChange={props.handleChange('penalty')}>
                                 <Picker.Item label="$2" value="2" />
                                 <Picker.Item label="$5" value="5" />
                                 <Picker.Item label="$10" value="10" />
                                 <Picker.Item label="$20" value="20" />
                             </Picker>
-
-                            <Button onPress={props.handleSubmit} title="Submit" />
+                            {this.props.location && <Button onPress={props.handleSubmit} title="Submit" />}
                         </View>
                     )}
                 </Formik>
@@ -59,15 +85,23 @@ class EditCommitment extends React.Component {
 }
 
 function mapStateToProps(state) {
-    var { commitmentLocation } = state.commitments;
+    var { location, frequency, penalty } = state.commitments;
     return {
-        commitmentLocation
+        location,
+        frequency,
+        penalty
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        update
+        updateCommitment: ({ field, value }) =>
+            dispatch(
+                update({
+                    field,
+                    value
+                })
+            )
     };
 }
 
