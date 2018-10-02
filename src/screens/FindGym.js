@@ -56,8 +56,10 @@ class FindGym extends React.Component {
     };
 
     saveGymLocation = () => {
+        const { navigation } = this.props;
         this.props.saveGymLocation(this.state.location.coords);
-        this.props.navigation.navigate('EditCommitment');
+        navigation.getParam('submitHandler')();
+        // navigation.navigate('EditCommitment')
     };
 
     render() {
