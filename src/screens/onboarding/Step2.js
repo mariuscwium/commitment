@@ -11,13 +11,11 @@ export default class Step2 extends React.Component {
                 description="We'll count how many times you visit the gym by occasionally checking your phone's location."
             >
                 <Button
-                    nextStep={{
-                        label: "Okay, let's find it",
-                        action: () => {
-                            this.props.navigation.navigate('FindGym', {
-                                submitHandler: () => this.props.navigation.navigate('Step3')
-                            });
-                        }
+                    text="Okay, let's find it"
+                    onPress={() => {
+                        this.props.navigation.navigate('FindGym', {
+                            submitHandler: () => this.props.navigation.navigate('Step3')
+                        });
                     }}
                 />
             </OnboardingStep>

@@ -3,13 +3,13 @@ import React from 'react';
 import OnboardingStep from './OnboardingStep';
 import { Picker } from 'native-base';
 
-export default class Step3 extends React.Component {
-    state = {
-        frequency: 0
-    };
+import { connect } from 'react-redux';
+import { update } from '../../modules/commitments';
 
+class Step3 extends React.Component {
     changeFrequency = value => {
-        this.setState({ frequency: value });
+        this.props.updateFrequency(value);
+        this.props.navigation.navigate('Step4');
     };
 
     render() {
@@ -17,15 +17,10 @@ export default class Step3 extends React.Component {
             <OnboardingStep
                 hero="How many times will you go to gym this week?"
                 description="This is where you decide your level of commitment!"
-                nextStep={{
-                    label: 'Select number of times',
-                    action: () => {
-                        this.props.navigation.navigate('Step2');
-                    }
-                }}
             >
                 <Picker
-                    selectedValue={this.state.frequency}
+                    style={{ position: 'absolute', bottom: 40, left: 40, right: 40 }}
+                    selectedValue={this.props.frequency}
                     onValueChange={this.changeFrequency}
                     placeholder="Select your commitment level"
                 >
@@ -38,3 +33,27 @@ export default class Step3 extends React.Component {
         );
     }
 }
+
+function mapStateToProps(state) {
+    var { frequency } = state.commitments;
+    return {
+        frequency
+    };
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        updateFrequency: value =>
+            dispatch(
+                update({
+                    field: 'frequency',
+                    value
+                })
+            )
+    };
+}
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Step3);

@@ -11,8 +11,8 @@ export default props => (
             justifyContent: 'center'
         }}
         bordered={true}
-        onPress={props.nextStep.action}
+        onPress={props.onPress}
     >
-        <Text style={{ textAlign: 'center' }}>{props.nextStep.label}</Text>
+        <Text style={{ textAlign: 'center' }}>{props.text}</Text>
     </Button>
 );

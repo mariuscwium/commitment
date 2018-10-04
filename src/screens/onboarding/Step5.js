@@ -5,7 +5,7 @@ import { StyleSheet, View } from "react-native";
 import { Container } from "native-base";
 import { Text as AnimatedText } from "react-native-animatable";
 import { LinearGradient } from "expo";
-import Button from "./onboarding/NextStepButton";
+import Button from "./NextStepButton";
 
 class ViewCommitment extends React.Component {
   render() {
@@ -18,47 +18,28 @@ class ViewCommitment extends React.Component {
               animation="fadeInUp"
               useNativeDriver={true}
               style={{
-                fontSize: 16,
+                fontSize: 32,
                 textAlign: "center",
-                marginTop: 20,
-                color: "#7E7F9A"
+                color: "#7E7F9A",
+                marginBottom: 20
               }}
             >
-              You have
+              All set!
             </AnimatedText>
             <AnimatedText
               useNativeDriver={true}
               animation="fadeInUp"
-              style={{ fontSize: 32, textAlign: "center", color: "#7E7F9A" }}
+              style={{ fontSize: 16, textAlign: "center", color: "#7E7F9A" }}
             >
-              {this.props.daysLeft} days left
-            </AnimatedText>
-            <AnimatedText
-              delay={500}
-              animation="fadeInUp"
-              useNativeDriver={true}
-              style={{
-                fontSize: 16,
-                textAlign: "center",
-                marginTop: 20,
-                color: "#7E7F9A"
-              }}
-            >
-              to go to gym {this.props.frequency - this.props.timesMet} more
-              time(s), or you will have to pay
-            </AnimatedText>
-            <AnimatedText
-              useNativeDriver={true}
-              animation="fadeInUp"
-              style={{ fontSize: 32, textAlign: "center", color: "#7E7F9A" }}
-            >
-              ${this.props.donation}
+              We'll check your phone's location occasionally over the next 7
+              days to see if you went to gym {this.props.frequency} times. If
+              you don't, we'll charge your account for a ${this.props.donation}{" "}
+              donation!
             </AnimatedText>
             <Button
-              text="Cancel my commitment
-              "
+              text="I  understand and agree!"
               onPress={() => {
-                this.props.navigation.navigate("EditCommitment");
+                this.props.navigation.navigate("ViewCommitment");
               }}
             />
           </Container>

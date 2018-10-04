@@ -3,7 +3,7 @@ const UPDATE = 'commitment/commitments/UPDATE';
 const initialState = {
     location: null,
     frequency: null,
-    penalty: null,
+    donation: null,
     timesMet: 0,
     daysLeft: 7
 };
